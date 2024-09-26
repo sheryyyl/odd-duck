@@ -1,6 +1,6 @@
 "use strict";
 
-const nombreProductos = ["bag", "banana", "bathroom", "boots", "breakfast", "bubblegum", "chair","cthulhu", "dog-duck", "dragon", "pen", "pet-sweep", "scissors", "shark","sweep", "tauntaun", "unicorn", "water-can", "wine-glass",];
+const nombreProductos = ["bag", "banana", "bathroom", "boots", "breakfast", "bubblegum", "chair", "cthulhu", "dog-duck", "dragon", "pen", "pet-sweep", "scissors", "shark", "sweep", "tauntaun", "unicorn", "water-can", "wine-glass",];
 const allProductos = [];
 
 function Producto(name, path) {
@@ -100,7 +100,7 @@ const productRank = {
       this.botonReiniciar.hidden = false;
       this.botonResultados.hidden = true;
       this.mostrarResultados();
-
+      renderChart();
       this.botonReiniciar.addEventListener("click", function () {
         location.reload();
       });
@@ -144,6 +144,77 @@ botonVerResultados.addEventListener("click", function () {
 
   contenedorResultados.appendChild(lista);
 });
+
+function renderChart() {
+  const ctx = document.getElementById('canvas').getContext('2d');
+  const productVotes = [];
+  const productTitle = [];
+  const productViews = [];
+
+  for (let index = 0; index < allProductos.length; index++) {
+    const elemento = allProductos[index];
+    productVotes.push(elemento.click);
+    productTitle.push(elemento.name);
+    productViews.push(elemento.views);
+  }
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: productTitle,
+      datasets: [
+        {
+          label: '# de click',
+          data: productVotes,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(201, 203, 207, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(201, 203, 207, 0.2)',
+          ],
+          borderWidth: 1
+        },
+        {
+          label: '# de views',
+          data: productViews,
+          backgroundColor: [
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(201, 203, 207, 0.2)',
+          ],
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      legend: {
+        display: false
+      },
+      scales: {
+        x: {
+          type: 'category',
+          ticks: {
+            stepSize: 1
+          },
+          grid: {
+            display: false
+          }
+        }
+      }
+    },
+  })
+}
 
 productRank.contenedorImagenes.addEventListener("click", productRank.onClick);
 productRank.mostrarImagenes();

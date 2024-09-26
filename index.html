@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/reset.css">
 </head>
+
 <body>
+
     <body>
         <header>
             <h1>Selección de productos</h1>
@@ -19,20 +22,26 @@
                 <img src="" alt="" id="img3" class="columnas" />
             </section>
             <section>
-                <button type="button" id="verResultados" style="display: none;" >Ver Resultados </button>
-              
+                <button type="button" id="verResultados" style="display: none;">Ver Resultados </button>
+
                 <button type="button" id="mostrarResultados" hidden>
-                  Ver Resultados</button>
+                    Ver Resultados</button>
                 <button type="button" id="reiniciar" hidden>Reiniciar</button>
-              
+
                 <section id="resultados"></section>
                 <section id="error-message"></section>
-              </section>
+            </section>
+            <section id="graficos">
+                <canvas id="canvas" width="300" height="300"></canvas>
+            </section>
         </main>
         <footer>
             <p>copyright@2024; class-201n3</p>
         </footer>
         <script src="./js/app.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     </body>
 </body>
+
 </html>
