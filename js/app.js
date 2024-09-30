@@ -1,6 +1,6 @@
 "use strict";
 
-const nombreProductos = ["bag", "banana", "bathroom", "boots", "breakfast", "bubblegum", "chair", "cthulhu", "dog-duck", "dragon", "pen", "pet-sweep", "scissors", "shark", "sweep", "tauntaun", "unicorn", "water-can", "wine-glass",];
+const nombreProductos = ["bag", "banana", "bathroom", "boots", "breakfast", "bubblegum", "chair", "cthulhu", "dog-duck", "dragon", "pen", "pet-sweep", "scissors", "shark", "sweep", "tauntaun", "unicorn", "water-can", "wine-glass"];
 const allProductos = [];
 
 function Producto(name, path) {
@@ -10,7 +10,6 @@ function Producto(name, path) {
   this.views = 0;
 }
 
-// Función para listar los productos y asignarles una imagen
 function listarProductos() {
   for (let i = 0; i < nombreProductos.length; i++) {
     let extension = nombreProductos[i] === "sweep" ? ".png" : ".jpg";
@@ -18,10 +17,27 @@ function listarProductos() {
     allProductos.push(producto);
   }
 }
+
+function cargarDatos() {
+  const datosGuardados = localStorage.getItem("productos");
+  if (datosGuardados) {
+    const productosCargados = JSON.parse(datosGuardados);
+    for (let i = 0; i < allProductos.length; i++) {
+      allProductos[i].click = productosCargados[i].click || 0;
+      allProductos[i].views = productosCargados[i].views || 0;
+    }
+  }
+}
+
+function guardarDatos() {
+  localStorage.setItem("productos", JSON.stringify(allProductos));
+}
+
 listarProductos();
-// Objeto principal que maneja la votación
+cargarDatos(); 
+
 const productRank = {
-  totalClick: 0,
+  totalClick: allProductos.reduce((total, producto) => total + producto.click, 0),
   votosRonda: 25,
   objetoIzq: null,
   objetoCent: null,
@@ -29,56 +45,50 @@ const productRank = {
   elementoIzq: document.getElementById("img1"),
   elementoCent: document.getElementById("img2"),
   elementoDer: document.getElementById("img3"),
-
   contenedorImagenes: document.getElementById("imagenes"),
   elementosResultados: document.getElementById("resultados"),
-
   botonResultados: document.getElementById("mostrarResultados"),
   botonReiniciar: document.getElementById("reiniciar"),
 
-  // Genera un número aleatorio para seleccionar productos
   numeroAleatorio: function () {
     return Math.floor(Math.random() * nombreProductos.length);
   },
 
-  // Muestra tres imágenes de productos aleatorias
   mostrarImagenes: function () {
     this.objetoIzq = allProductos[this.numeroAleatorio()];
     this.objetoCent = allProductos[this.numeroAleatorio()];
     this.objetoDer = allProductos[this.numeroAleatorio()];
 
-    // Evita que dos imágenes iguales se muestren al mismo tiempo
     while (this.objetoIzq === this.objetoCent || this.objetoIzq === this.objetoDer || this.objetoCent === this.objetoDer) {
       this.objetoCent = allProductos[this.numeroAleatorio()];
       this.objetoDer = allProductos[this.numeroAleatorio()];
     }
 
-    // Incrementa las vistas de cada imagen
     this.objetoIzq.views += 1;
     this.objetoCent.views += 1;
     this.objetoDer.views += 1;
 
-    // Asigna las imágenes a los elementos
     this.elementoIzq.src = this.objetoIzq.path;
     this.elementoIzq.name = this.objetoIzq.name;
     this.elementoCent.src = this.objetoCent.path;
     this.elementoCent.name = this.objetoCent.name;
     this.elementoDer.src = this.objetoDer.path;
     this.elementoDer.name = this.objetoDer.name;
+
+    guardarDatos();
   },
 
-  // Cuenta los clics en una imagen
   contarClick: function (id) {
     for (let i = 0; i < allProductos.length; i++) {
       if (allProductos[i].name === id) {
         allProductos[i].click += 1;
         this.totalClick += 1;
         console.log(`${allProductos[i].name} tiene ${allProductos[i].click} click(s)`);
+        guardarDatos();
       }
     }
   },
 
-  // Muestra los resultados después de completar las rondas de votación
   mostrarResultados: function () {
     const lista = document.createElement("ul");
     for (let i = 0; i < allProductos.length; i++) {
@@ -93,7 +103,6 @@ const productRank = {
     this.elementosResultados.appendChild(lista);
   },
 
-  // Muestra el botón para mostrar los resultados y el botón para reiniciar
   mostrarBoton: function () {
     this.botonResultados.hidden = false;
     this.botonResultados.addEventListener("click", () => {
@@ -102,12 +111,12 @@ const productRank = {
       this.mostrarResultados();
       renderChart();
       this.botonReiniciar.addEventListener("click", function () {
+        localStorage.removeItem("productos"); 
         location.reload();
       });
     });
   },
 
-  // Controlador para el clic en las imágenes
   onClick: function (event) {
     if (
       event.target.name === productRank.objetoIzq.name ||
@@ -127,6 +136,7 @@ const productRank = {
     }
   },
 };
+
 const botonVerResultados = document.getElementById("verResultados");
 
 botonVerResultados.addEventListener("click", function () {
@@ -190,31 +200,28 @@ function renderChart() {
             'rgba(255, 159, 64, 0.2)',
             'rgba(255, 205, 86, 0.2)',
             'rgba(75, 192, 192, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
+          ],
+          borderColor: [
             'rgba(153, 102, 255, 0.2)',
-            'rgba(201, 203, 207, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
           ],
           borderWidth: 1
         }
       ]
     },
     options: {
-      legend: {
-        display: false
-      },
       scales: {
-        x: {
-          type: 'category',
-          ticks: {
-            stepSize: 1
-          },
-          grid: {
-            display: false
-          }
+        y: {
+          beginAtZero: true
         }
       }
-    },
-  })
+    }
+  });
 }
 
-productRank.contenedorImagenes.addEventListener("click", productRank.onClick);
 productRank.mostrarImagenes();
+productRank.contenedorImagenes.addEventListener("click", productRank.onClick.bind(productRank));
