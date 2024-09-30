@@ -66,3 +66,14 @@ footer {
     width: 400px;
     margin: 0 auto;
 }
+
+#resultados {
+    margin: 50px 0;
+    text-align: center;
+}
+
+#resultados li {
+    padding: 10px;
+    background-color: #fff;
+    list-style: none;
+}
